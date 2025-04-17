@@ -15,12 +15,16 @@ hourly_rate = st.number_input("Hourly pay rate ($):", min_value=0.0, step=0.5, v
 
 # --- Time entry form
 with st.form("time_form"):
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
-        clock_in = st.text_input("Clock-in time", placeholder="e.g., 8:00 AM or 08:00")
+        day = st.selectbox("Day of the Week", [
+            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        ])
     with col2:
+        clock_in = st.text_input("Clock-in time", placeholder="e.g., 8:00 AM or 08:00")
+    with col3:
         clock_out = st.text_input("Clock-out time", placeholder="e.g., 5:00 PM or 17:00")
-    
+
     submitted = st.form_submit_button("Add Entry")
 
     def parse_time(time_str):
@@ -43,6 +47,7 @@ with st.form("time_form"):
         else:
             duration = (end - start).total_seconds() / 3600
             st.session_state.time_entries.append({
+                "Day": day,
                 "Clock In": clock_in,
                 "Clock Out": clock_out,
                 "Hours": round(duration, 2)
@@ -67,4 +72,3 @@ if st.session_state.time_entries:
         st.experimental_rerun()
 else:
     st.info("Add your first entry above to begin calculating.")
-
