@@ -92,6 +92,6 @@ def convert_df_to_excel(df):
 
 # --- Download buttons
 st.markdown("### 📤 Export Report")
-col1 = st.columns(1)
+col1,col2 = st.columns(2)
 with col1:
     st.download_button("Download as CSV", data=convert_df_to_csv(df), file_name="weekly_time_card.csv", mime="text/csv")
