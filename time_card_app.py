@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta, date
 import pandas as pd
+from io import BytesIO
 
 st.set_page_config(page_title="Weekly Time Card Calculator", layout="centered")
 st.title("📅 Weekly Time Card Calculator")
@@ -73,6 +74,24 @@ for d in week_dates:
 # --- Add totals row
 data.append(["", "Total", "", "", round(total_hours, 2), f"${round(total_pay, 2):.2f}"])
 
-# --- Display table
+# --- Display table (without row numbers)
 df = pd.DataFrame(data, columns=headers)
-st.table(df)
+st.dataframe(df.style.hide(axis="index"))
+
+# --- Export functions
+def convert_df_to_csv(df):
+    return df.to_csv(index=False).encode("utf-8")
+
+def convert_df_to_excel(df):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, index=False, sheet_name="Weekly Time Card")
+    return output.getvalue()
+
+# --- Download buttons
+st.markdown("### 📤 Export Report")
+col1, col2 = st.columns(2)
+with col1:
+    st.download_button("Download as CSV", data=convert_df_to_csv(df), file_name="weekly_time_card.csv", mime="text/csv")
+with col2:
+    st.download_button("Download as Excel", data=convert_df_to_excel(df), file_name="weekly_time_card.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
