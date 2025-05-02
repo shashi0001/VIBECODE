@@ -93,5 +93,3 @@ st.markdown("### 📤 Export Report")
 col1, col2 = st.columns(2)
 with col1:
     st.download_button("Download as CSV", data=convert_df_to_csv(df), file_name="weekly_time_card.csv", mime="text/csv")
-with col2:
-    st.download_button("Download as Excel", data=convert_df_to_excel(df), file_name="weekly_time_card.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
