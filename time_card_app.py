@@ -8,7 +8,7 @@ st.title("📅 Weekly Time Card Calculator")
 st.write("Enter your clock-in and clock-out times for each day.")
 
 # --- Hourly rate input
-hourly_rate = st.number_input("Hourly pay rate ($):", min_value=0.0, step=0.5, value=20.0)
+hourly_rate = st.number_input("Hourly pay rate ($):", min_value=0.0, step=0.5, value=14.0)
 
 # --- Time format selector
 time_format_option = st.selectbox("Select time format:", ["24-hour (e.g., 14:30)", "12-hour (e.g., 2:30 PM)"])
