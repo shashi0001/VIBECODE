@@ -5,10 +5,14 @@ from io import BytesIO
 
 st.set_page_config(page_title="Weekly Time Card Calculator", layout="centered")
 st.title("📅 Weekly Time Card Calculator")
-st.write("Enter your clock-in and clock-out times for each day. Supports both 24-hour (`14:30`) and 12-hour (`2:30 PM`) formats.")
+st.write("Enter your clock-in and clock-out times for each day.")
 
-# --- Hourly rate
+# --- Hourly rate input
 hourly_rate = st.number_input("Hourly pay rate ($):", min_value=0.0, step=0.5, value=20.0)
+
+# --- Time format selector
+time_format_option = st.selectbox("Select time format:", ["24-hour (e.g., 14:30)", "12-hour (e.g., 2:30 PM)"])
+use_24_hour = time_format_option.startswith("24")
 
 # --- Get current week's Sunday
 today = date.today()
@@ -16,14 +20,12 @@ start_of_week = today - timedelta(days=today.weekday() + 1) if today.weekday() !
 week_dates = [start_of_week + timedelta(days=i) for i in range(7)]
 
 # --- Time parsing function
-def parse_time(time_str):
-    formats = ["%H:%M", "%I:%M %p"]
-    for fmt in formats:
-        try:
-            return datetime.strptime(time_str.strip(), fmt)
-        except ValueError:
-            continue
-    return None
+def parse_time(time_str, use_24h=True):
+    fmt = "%H:%M" if use_24h else "%I:%M %p"
+    try:
+        return datetime.strptime(time_str.strip(), fmt)
+    except ValueError:
+        return None
 
 # --- Initialize session state
 if "weekly_entries" not in st.session_state:
@@ -50,8 +52,8 @@ for d in week_dates:
     st.session_state.weekly_entries[d_str]["Clock In"] = clock_in
     st.session_state.weekly_entries[d_str]["Clock Out"] = clock_out
 
-    start = parse_time(clock_in) if clock_in else None
-    end = parse_time(clock_out) if clock_out else None
+    start = parse_time(clock_in, use_24_hour) if clock_in else None
+    end = parse_time(clock_out, use_24_hour) if clock_out else None
 
     if start and end and end > start:
         duration = (end - start).total_seconds() / 3600
@@ -74,7 +76,7 @@ for d in week_dates:
 # --- Add totals row
 data.append(["", "Total", "", "", round(total_hours, 2), f"${round(total_pay, 2):.2f}"])
 
-# --- Display table (without row numbers)
+# --- Display table (no index)
 df = pd.DataFrame(data, columns=headers)
 st.dataframe(df.style.hide(axis="index"))
 
@@ -93,3 +95,5 @@ st.markdown("### 📤 Export Report")
 col1, col2 = st.columns(2)
 with col1:
     st.download_button("Download as CSV", data=convert_df_to_csv(df), file_name="weekly_time_card.csv", mime="text/csv")
+with col2:
+    st.download_button("Download as Excel", data=convert_df_to_excel(df), file_name="weekly_time_card.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
