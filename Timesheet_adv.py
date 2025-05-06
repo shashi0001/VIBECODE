@@ -1,5 +1,7 @@
+
 import streamlit as st
 from datetime import datetime, time, timedelta
+### nedd to change to get day or date based on current week and witj syncronization.
 
 st.title("🕒 Weekly Timesheet Entry")
 
