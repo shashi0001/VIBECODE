@@ -4,7 +4,7 @@ from datetime import datetime, time, timedelta
 st.title("🕒 Weekly Timesheet Entry")
 
 # Sample days of the week
-days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 st.markdown("### Enter your hours")
 
